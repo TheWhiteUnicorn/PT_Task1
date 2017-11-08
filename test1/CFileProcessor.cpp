@@ -44,7 +44,7 @@ void CFileProcessor::Process(string strFileInName, string strFileOutName) {
 				bEndingPunctuationMark = true;
 				bEndOfSentence = true;
 			}
-			bFoundWanted = _IsWanted(strCurWord, bEndingPunctuationMark);
+			bFoundWanted += _IsWanted(strCurWord, bEndingPunctuationMark);
 			if (bEndOfSentence) {
 				if(bFoundWanted)
 					m_ofsFileOut << strCurSentence;
