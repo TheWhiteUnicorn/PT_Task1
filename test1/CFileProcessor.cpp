@@ -46,7 +46,9 @@ void CFileProcessor::Process(string strFileInName, string strFileOutName) {
 				bEndingPunctuationMark = true;
 				bEndOfSentence = true;
 			}
-			bFoundWanted += _IsWanted(strCurWord, bEndingPunctuationMark);
+			if(_IsWanted(strCurWord, bEndingPunctuationMark))
+				bFoundWanted = true;
+
 			if (bEndOfSentence) {
 				if(bFoundWanted)
 					m_ofsFileOut << strCurSentence;
@@ -73,7 +75,7 @@ bool CFileProcessor::_FilesAreReady() noexcept {
 
 bool CFileProcessor::_IsWanted(const string strCurWord, const bool bEndingPunctSign) noexcept {
 	string strCurTmp(strCurWord);
-	strCurTmp[0] = towlower(strCurTmp[0]);
+	strCurTmp[0] = tolower(strCurTmp[0]);
 	bool bSizeWithoutSignsEqual = !bEndingPunctSign && strCurTmp.size() == m_strWantedWord.size();
 	bool bSizeWithSignsEqueal = bEndingPunctSign && strCurTmp.size() - 1 == m_strWantedWord.size();
 
