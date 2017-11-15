@@ -1,8 +1,8 @@
 #include <iostream>
 #include "CFileProcessor.h"
 
-#define IF_INVITATION "ֲגוהטעו טלÿ פאיכא גגמהא: "
-#define OF_INVITATION "ֲגוהטעו טלÿ פאיכא גûגמהא: "
+const char IF_INVITATION[] = "ֲגוהטעו טלÿ פאיכא גגמהא: ";
+const char OF_INVITATION[] = "ֲגוהטעו טלÿ פאיכא גûגמהא: ";
 
 using namespace std;
 

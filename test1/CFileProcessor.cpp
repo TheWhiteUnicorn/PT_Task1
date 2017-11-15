@@ -1,10 +1,12 @@
 #include "CFileProcessor.h"
-#include <stdexcept>
+#include <cassert>
+#include <ctype.h>
 
-#define SPACE_CHAR ' '
-#define FOPEN_ERR_MSG "Ошибка при открытии файлов"
-#define END_OF_SENTENCE_SIGNS ".!?"
-#define COMMA_CHAR ','
+const char SPACE_CHAR = ' ';
+const char COMMA_CHAR = ',';
+const char FOPEN_ERR_MSG[] = "Ошибка при открытии файлов";
+const char END_OF_SENTENCE_SIGNS[] = ".!?";
+
 
 
 CFileProcessor::CFileProcessor() {
@@ -15,7 +17,7 @@ CFileProcessor::~CFileProcessor() {
 }
 
 
-void CFileProcessor::SetWantedWord(string strWanted) {
+void CFileProcessor::SetWantedWord(string strWanted) noexcept {
 	m_strWantedWord = strWanted;
 }
 
@@ -29,7 +31,7 @@ void CFileProcessor::Process(string strFileInName, string strFileOutName) {
 		bool bFoundWanted = false; // Говорит о том, что в текущем предложении найдено искомое слово
 		
 		while (!m_ifsFileIn.eof()){
-			if (!_FilesAreReady()) throw new exception(FOPEN_ERR_MSG);
+			if (!_FilesAreReady()) throw new exception(FOPEN_ERR_MSG); //exception
 
 			m_ifsFileIn >> strCurWord;
 			// Сразу заносим слово в предложение
@@ -58,30 +60,27 @@ void CFileProcessor::Process(string strFileInName, string strFileOutName) {
 }
 
 void CFileProcessor::_OpenFiles(string strFileInName, string strFileOutName) {
+	assert(strFileInName.size() != NULL && strFileOutName.size() != NULL);
 	m_ifsFileIn.open(strFileInName);
 	m_ofsFileOut.open(strFileOutName);
-	if (!_FilesAreReady()) throw new exception(FOPEN_ERR_MSG);
+	if (!_FilesAreReady()) throw new exception(FOPEN_ERR_MSG); //exception
 }
 
-bool CFileProcessor::_FilesAreReady() {
-	if (m_ifsFileIn.is_open() && m_ofsFileOut.is_open())
-		return true;
-	else
-		return false;
+bool CFileProcessor::_FilesAreReady() noexcept {
+	return (m_ifsFileIn && m_ofsFileOut);
 }
 
-bool CFileProcessor::_IsWanted(const string strCurWord, const bool bEndingPunctSign) {
+
+bool CFileProcessor::_IsWanted(const string strCurWord, const bool bEndingPunctSign) noexcept {
 	string strCurTmp(strCurWord);
-	strCurTmp[0] = tolower(strCurTmp[0]);
+	strCurTmp[0] = towlower(strCurTmp[0]);
 	bool bSizeWithoutSignsEqual = !bEndingPunctSign && strCurTmp.size() == m_strWantedWord.size();
 	bool bSizeWithSignsEqueal = bEndingPunctSign && strCurTmp.size() - 1 == m_strWantedWord.size();
-	if (strCurTmp.find(m_strWantedWord) != -1 && (bSizeWithSignsEqueal || bSizeWithoutSignsEqual))
-		return true;
 
-	return false;
+	return strCurTmp.find(m_strWantedWord) != -1 && (bSizeWithSignsEqueal || bSizeWithoutSignsEqual);
 }
 
-void CFileProcessor::_CloseFiles() {
+void CFileProcessor::_CloseFiles() noexcept {
 	m_ifsFileIn.close();
 	m_ofsFileOut.close();
 }
